@@ -19,16 +19,16 @@ W_crew = n_pilots * pilot_mass_kg * kg_to_lb  # [lb]
 # Payload (edit these to match your RFP mission case)
 # RFP says avionics/sensors weight = 2,500 lb internal
 W_avionics = 2500.0  # [lb]
-
+W_engine = 8000 
 
 # Air-to-Air mission: 6x AIM-120C, 2x AIM-9X
 W_AIM120 = 350  # [lb] 
 W_AIM9X  = 190   # [lb] 
-W_payload_AA = W_avionics + 6*W_AIM120 + 2*W_AIM9X
+W_payload_AA = W_avionics + 6*W_AIM120 + 2*W_AIM9X #+ W_engine
 
 # -- Strike mission (RFP): 4x MK-83 JDAM, 2x AIM-9X
 W_MK83_JDAM = 1050  # [lb] 
-W_payload_STRIKE = W_avionics + 4*W_MK83_JDAM + 2*W_AIM9X
+W_payload_STRIKE = W_avionics + 4*W_MK83_JDAM + 2*W_AIM9X #+ W_engine
 
 # Optional: add pylons/racks/pods/tankage as a simple % of external stores
 stores_install_fraction = 0.06  # 6% of (weapons only); major assumption
@@ -76,6 +76,7 @@ for _, frac in segment_fracs.items():
 W_end_W0 *= Wf_Wi_cruise
 W_end_W0 *= Wf_Wi_loiter
 
+
 fuel_frac_mission = 1.0 - W_end_W0
 reserve_factor    = 1.06
 fuel_frac_total   = reserve_factor * fuel_frac_mission  # Wf/W0
@@ -100,11 +101,6 @@ def iterate_W0(W_payload, W_crew, fuel_frac, W0_guess=80000.0, err=1e-6, max_ite
     for i in range(max_iter):
         We_W0 = A * (W0 ** C)
         denom = 1.0 - fuel_frac - We_W0
-        #if denom <= 0:
-            #raise ValueError(
-                #f"Denominator <= 0. Check fuel fraction or A,C. "
-                #f"We/W0={We_W0:.3f}, Wf/W0={fuel_frac:.3f}"
-            #)
         W0_new = (W_payload + W_crew) / denom
         delta = abs(W0_new - W0) / abs(W0_new)
         W0 = W0_new
@@ -118,8 +114,8 @@ def solve_case(case_name, W_payload_case, W0_guess):
     Wf = fuel_frac_total * W0
     return {
         "name": case_name,
-        "W0": W0,
-        "We": We,
+        "W0": W0 + 8000,
+        "We": We + 8000,
         "Wf": Wf,
         "WeW0": We_W0,
         "WfW0": fuel_frac_total,
