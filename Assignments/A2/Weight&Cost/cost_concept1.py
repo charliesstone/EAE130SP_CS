@@ -161,6 +161,3 @@ print(f"Manufacturing cost total  = ${C_MFG:,.0f}")
 print(f"Unit production cost      = ${unit_cost:,.0f}")
 print()
 
-print("=== Report-friendly linear form ===")
-print(f"RDT&E ~= ${RDT_E_per_We:,.0f} * We")
-print(f"Unit cost ~= ${unit_cost_per_We:,.0f} * We")
